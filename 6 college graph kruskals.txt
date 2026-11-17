@@ -1,0 +1,71 @@
+class Graph:
+    def __init__(self, vertices):
+        self.vertices = vertices
+        self.adj = {v: [] for v in vertices}
+        self.edges = []
+
+    def add_edge(self, u, v, w):
+        self.adj[u].append((v, w))
+        self.adj[v].append((u, w))
+        self.edges.append((w, u, v))
+
+    def find(self, parent, i):
+        if parent[i] != i:
+            parent[i] = self.find(parent, parent[i])
+        return parent[i]
+
+    def union(self, parent, rank, x, y):
+        if rank[x] < rank[y]:
+            parent[x] = y
+        elif rank[x] > rank[y]:
+            parent[y] = x
+        else:
+            parent[y] = x
+            rank[x] += 1
+
+    def kruskal(self):
+        parent = {v: v for v in self.vertices}
+        rank = {v: 0 for v in self.vertices}
+        mst = []
+        total = 0
+
+        self.edges.sort()
+
+        for w, u, v in self.edges:
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+
+            if x != y:
+                mst.append((u, v, w))
+                total += w
+                self.union(parent, rank, x, y)
+
+        print("\nMinimum Spanning Tree:")
+
+        for u, v, w in mst:
+            print(u, "-", v, ":", w)
+
+        if len(mst) == len(self.vertices) - 1:
+            print("Total Distance:", total)
+        else:
+            print("Graph is not connected")
+
+
+departments = ["Computer", "IT", "Mechanical", "Civil", "ENTC"]
+
+g = Graph(departments)
+
+g.add_edge("Computer", "IT", 10)
+g.add_edge("Computer", "Mechanical", 20)
+g.add_edge("IT", "Mechanical", 15)
+g.add_edge("IT", "Civil", 25)
+g.add_edge("Mechanical", "Civil", 30)
+g.add_edge("Mechanical", "ENTC", 18)
+g.add_edge("Civil", "ENTC", 12)
+
+print("Adjacency List:")
+
+for vertex in g.adj:
+    print(vertex, ":", g.adj[vertex])
+
+g.kruskal()
