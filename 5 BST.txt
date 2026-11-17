@@ -1,0 +1,118 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, root, data):
+        if root is None:
+            return Node(data)
+
+        if data == root.data:
+            print("Duplicate entry not allowed")
+        elif data < root.data:
+            root.left = self.insert(root.left, data)
+        else:
+            root.right = self.insert(root.right, data)
+
+        return root
+
+    def search(self, root, key):
+        if root is None or root.data == key:
+            return root
+
+        if key < root.data:
+            return self.search(root.left, key)
+
+        return self.search(root.right, key)
+
+    def delete(self, root, key):
+        if root is None:
+            return root
+
+        if key < root.data:
+            root.left = self.delete(root.left, key)
+
+        elif key > root.data:
+            root.right = self.delete(root.right, key)
+
+        else:
+            if root.left is None:
+                return root.right
+
+            elif root.right is None:
+                return root.left
+
+            temp = root.right
+
+            while temp.left:
+                temp = temp.left
+
+            root.data = temp.data
+            root.right = self.delete(root.right, temp.data)
+
+        return root
+
+    def inorder(self, root):
+        if root:
+            self.inorder(root.left)
+            print(root.data, end=" ")
+            self.inorder(root.right)
+
+    def preorder(self, root):
+        if root:
+            print(root.data, end=" ")
+            self.preorder(root.left)
+            self.preorder(root.right)
+
+    def postorder(self, root):
+        if root:
+            self.postorder(root.left)
+            self.postorder(root.right)
+            print(root.data, end=" ")
+
+bst = BST()
+
+while True:
+    print("\n1.Insert  2.Delete  3.Search  4.Display  5.Exit")
+    ch = int(input("Enter choice: "))
+
+    if ch == 1:
+        x = int(input("Enter value: "))
+        bst.root = bst.insert(bst.root, x)
+
+    elif ch == 2:
+        x = int(input("Enter value to delete: "))
+        if bst.search(bst.root, x):
+            bst.root = bst.delete(bst.root, x)
+            print("Node deleted")
+        else:
+            print("Value not found")
+
+    elif ch == 3:
+        x = int(input("Enter value to search: "))
+        if bst.search(bst.root, x):
+            print("Value found")
+        else:
+            print("Value not found")
+
+    elif ch == 4:
+        print("Inorder:")
+        bst.inorder(bst.root)
+
+        print("\nPreorder:")
+        bst.preorder(bst.root)
+
+        print("\nPostorder:")
+        bst.postorder(bst.root)
+        print()
+
+    elif ch == 5:
+        break
+
+    else:
+        print("Invalid choice")
